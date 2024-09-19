@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="./styles/coffe.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <style></style>
+  </head>
+  <body>
+    <div class="pembungkus" id="current">
+      <div class="current-order">
+        <h1>Current Order</h1>
+        <div class="order" id="order"></div>
+        <div class="total">
+          <div class="atas">
+            <h2>Total</h2>
+            <h1 id="total"></h1>
+          </div>
+          <div class="bawah">
+            <button id="myBtn">Countinue to Payment</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal" id="myModal">
+      <div class="modal-content">
+        <span class="close" style="display: none">&times;</span>
+        <div class="satu">
+          <h1>Pembayaran</h1>
+        </div>
+        <div class="dua">
+          <input
+            type="text"
+            placeholder="Massukan Jumlah Uang Anda"
+            id="uangSaya"
+          />
+        </div>
+        <div class="tiga">
+          <h3>Total</h3>
+          <h3 id="totalInModal"></h3>
+        </div>
+        <hr />
+        <div class="empat">
+          <h3>kembalian</h3>
+          <h3 id="kembalian"></h3>
+        </div>
+        <hr />
+        <div class="print">
+          <button href="" onclick="endTotal()" id="endTotal">
+            Cetak Pembayaran  
+          </button>
+        </div>
+        <div id="note"></div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="wrap">
+        <div class="sec-1">
+          <div class="text">
+            <h1>Welcome, Gorry</h1>
+            <p>Discover whatever you need easily</p>
+          </div>
+          <form action="">
+            <label for=""
+              ><i class="ri-search-line"></i>
+              <input type="text" placeholder="Cari Produk"
+            /></label>
+          </form>
+        </div>
+        <div class="sec-2">
+          <ul>
+            <div>
+              <li><a href="">Signature</a></li>
+              <li><a href="">Croissant</a></li>
+              <li><a href="">Waffle</a></li>
+              <li><a href="">Coffee</a></li>
+              <li><a href="">Ice Cream</a></li>
+            </div>
+          </ul>
+        </div>
+        <div class="sec-3" id="wrap"></div>
+      </div>
+    </div>
+    <script>
+      var modal = document.getElementById("myModal");
+
+      var btn = document.getElementById("myBtn");
+
+      var span = document.getElementsByClassName("close")[0];
+
+      btn.onclick = function () {
+        modal.style.display = "block";
+        updateTotalInModal();
+      };
+
+      span.onclick = function () {
+        modal.style.display = "none";
+        updateTotalInModal();
+      };
+
+      window.onclick = function (event) {
+        if (event.target == modal) {
+          modal.style.display = "none";
+        }
+        updateTotalInModal();
+      };
+
+      function updateTotalInModal() {
+        const total = document.getElementById("totalInModal");
+        const totalSideBar = document.getElementById("total").textContent;
+        total.textContent = totalSideBar;
+      }
+
+      function endTotal() {
+        const total = parseFloat(document.getElementById("totalInModal").textContent.replace("Rp","")) ;
+        const uangSaya = parseFloat(document.getElementById("uangSaya").value);
+        const note = document.getElementById("note");
+        const kembalian = document.getElementById("kembalian")
+        const simpanKembalian = uangSaya-total
+        console.log(simpanKembalian)
+        console.log(uangSaya)
+       if(total>uangSaya){
+        note.textContent = `Uang Anda Kurang ${simpanKembalian}`;
+       }else{
+        kembalian.textContent = `Rp ${simpanKembalian}`
+       }
+        console.log(total)
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const fetchPromise = fetch("./coffee.json");
+        const wrap = document.getElementById("wrap");
+
+        fetchPromise
+          .then((response) => {
+            return response.json();
+          })
+          .then((data) => {
+            const products = data.products;
+            saveProdukToLocalStorage(products);
+            wrap.innerHTML = getProducts(products);
+          });
+        const getProducts = (products) => {
+          return products
+            .map(
+              (product) => `<div class="card" id="card" key="${product.id}">
+                  <button id="button" class="button" onclick="addProduk(${product.id})">
+                  <div class="gambar">
+                <img src="${product.img}" alt="" id="picture" />
+              </div>
+              <h2 id="title">${product.title}</h2>
+              <p id="para">
+                ${product.description}
+              </p>
+              <h2 id="price">${product.price}</h2>
+                </button>
+              </div>`
+            )
+            .join("\n");
+        };
+        const cart = getCarts();
+        updateOrder(cart);
+      });
+
+      function addProduk(id) {
+        const carts = getCarts();
+        const products = getProdukFromLocalStorage();
+        const productsSelected = products.find((product) => product.id == id);
+        const existingProduk = carts.some((products) => products.id == id);
+        if (existingProduk) {
+          counter += 1;
+        } else {
+          carts.push({
+            id: id,
+            title: productsSelected.title,
+            price: productsSelected.price,
+            img: productsSelected.img,
+            counter: 1,
+          });
+        }
+        total(carts);
+        saveCarts(carts);
+        updateOrder(carts);
+      }
+
+      function updateOrder(cart) {
+        const order = document.getElementById("order");
+        order.innerHTML = cart
+          .map(
+            (product) =>
+              `<div class="order">
+        <div class="cardd" id="cardd" key="${product.id}">
+          <div class="img">
+            <img src="./assets/coffe-13.jpg" alt="" />
+          </div>
+          <div class="teks">
+            <h2 id="title">${product.title}</h2>
+            <div class="text">
+              <div class="h3">
+                <h3 id="price">${product.price}</h3>
+              </div>
+              <div class="order" id="order">
+                <button id="minus" onclick="minus(${product.id})">-</button>
+                <div id="value">${product.counter}</div>
+                <button id="plus" onclick="plus(${product.id})">+</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>`
+          )
+          .join("\n");
+        const carts = getCarts();
+        total(carts);
+      }
+
+      // function changeQuantity(id, amount){
+      //   const carts = getCarts()
+      //   const productSelected = carts.find((product) => product.id == id)
+      //   if(productSelected){
+      //     productSelected.counter += amount;
+      //     if(productSelected.counter === 0){
+      //       const index = carts.indexOf(productSelected)
+      //       carts.splice(index,1)
+      //     }
+      //   }
+      //   saveCarts(carts)
+      //   updateOrder(carts)
+      // }
+      function plus(id) {
+        const carts = getCarts();
+        const produk = carts.find((product) => product.id === id);
+        if (produk) {
+          produk.counter += 1;
+          total(carts);
+          saveCarts(carts);
+          updateOrder(carts);
+        }
+      }
+      function minus(id) {
+        const carts = getCarts();
+        const produk = carts.find((product) => product.id === id);
+        if (produk && produk.counter >= 0) {
+          produk.counter--;
+          if (produk.counter === 0) {
+            const index = carts.indexOf(produk);
+            carts.splice(index, 1);
+          }
+          total(carts);
+          saveCarts(carts);
+          updateOrder(carts);
+        }
+      }
+      function total(carts) {
+        const total = carts.reduce(
+          (acc, product) => acc + product.price * product.counter,
+          0
+        );
+        document.getElementById("total").innerHTML = `Rp ${total}`;
+      }
+      function getCarts() {
+        const carts = localStorage.getItem("carts");
+        return carts ? JSON.parse(carts) : [];
+      }
+      function saveCarts(arg) {
+        localStorage.setItem("carts", JSON.stringify(arg));
+      }
+      function getProdukFromLocalStorage() {
+        const session = localStorage.getItem("products");
+        return session ? JSON.parse(session) : [];
+      }
+      function saveProdukToLocalStorage(arg) {
+        localStorage.setItem("products", JSON.stringify(arg));
+      }
+    </script>
+  </body>
+</html>

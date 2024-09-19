@@ -1,0 +1,46 @@
+{
+    "products": [
+        {
+            "id" : 1,
+            "title" : "Cappucino Coffee ",
+            "description": "Kopi Cappucino dengan campuran susu dan sedikit diberi topping boba",
+            "price": "12000",
+            "img": "./assets/coffe-13.jpg"
+        },
+        {
+            "id" : 2,
+            "title" : "Hazelnut Coffee ",
+            "description": "Kopi Cappucino dengan campuran susu dan sedikit diberi topping bobaa",
+            "price": "13000",
+            "img": "./assets/coffe-13.jpg"
+        },
+        {  
+            "id" : 3,
+            "title" : "Cincau Coffee ",
+            "description": "Kopi Cappucino dengan campuran susu dan sedikit diberi topping booba",
+            "price": "14000",
+            "img": "./assets/coffe-13.jpg"
+        },
+        {
+            "id" : 4,
+            "title" : "Taro Coffe ",
+            "description": "Kopi Cappucino dengan campuran susu dan sedikit diberi topping bobaa",
+            "price": "15000",
+            "img": "./assets/coffe-13.jpg"
+        },
+        {
+            "id" : 5,
+            "title" : "Americano",
+            "description": "Kopi Cappucino dengan campuran susu dan sedikit diberi topping bboba",
+            "price": "10000",
+            "img": "./assets/coffe-13.jpg"
+        },
+        {
+            "id" : 6,
+            "title" : "Cappucino Coffee V2",
+            "description": "Kopi Cappucino dengan campuran susu dan sedikit diberi topping bobba",
+            "price": "18000",
+            "img": "./assets/coffe-13.jpg"
+        }
+    ]
+}
